@@ -1,0 +1,4 @@
+docker pull python:3.10-slim
+docker build -t sum_py (sum_py es el nombre de la imagen, lo cambias si es necesario)
+docker run --rm -v ${PWD}:/app sum_py (si ejecutas desde Powershell en Windows)
+docker run --rm -v $(pwd):/app sum_py (si ejecutas desde bash en linux)

@@ -1,42 +1,40 @@
 const fs = require('fs');
+const path = require('path');
 
-function sumaPrimos(n) {
-    if (n < 1) return 0;
-
-    const esPrimo = new Array(n + 1).fill(true);
+function cribaEratostenes(limiteSuperior) {
+    let esPrimo = new Array(limiteSuperior + 1).fill(true);
     esPrimo[0] = esPrimo[1] = false;
 
-    for (let p = 2; p * p <= n; p++) {
-        if (esPrimo[p]) {
-            for (let i = p * p; i <= n; i += p) {
-                esPrimo[i] = false;
+    for (let i = 2; i * i <= limiteSuperior; i++) {
+        if (esPrimo[i]) {
+            for (let multiplo = i * i; multiplo <= limiteSuperior; multiplo += i) {
+                esPrimo[multiplo] = false;
             }
         }
     }
 
-    let suma = 0;
-    for (let p = 2; p <= n; p++) {
-        if (esPrimo[p]) {
-            suma += p;
-        }
-    }
-
-    return suma;
+    return esPrimo
+        .map((primo, index) => (primo ? index : 0))
+        .filter(numero => numero !== 0);
 }
 
-const n = 1000000; // Cambia este valor para probar con otros números
-const inicio = Date.now();
+function principal() {
+    const tiempoInicio = Date.now();
+    
+    const limite = 10000000;
+    const listaPrimos = cribaEratostenes(limite);
+    const sumaPrimos = listaPrimos.reduce((acc, num) => acc + num, 0);
+    
+    const tiempoFin = Date.now();
+    const tiempoEjecucion = (tiempoFin - tiempoInicio) / 1000.0;
 
-const resultado = sumaPrimos(n);
+    console.log(`NODE: Suma de los primos hasta 10 millones: ${sumaPrimos}`);
+    console.log(`Tiempo de ejecución: ${tiempoEjecucion.toFixed(2)} s`);
 
-const fin = Date.now();
-const duracion = fin - inicio;
+    const directorioScript = __dirname;
+    const rutaArchivo = path.join(directorioScript, 'data_js.txt');
 
-// Guardar la suma en un archivo
-fs.writeFileSync('nodejs_suma.txt', resultado.toString());
+    fs.writeFileSync(rutaArchivo, `${tiempoEjecucion}\n${sumaPrimos}`);
+}
 
-// Guardar el tiempo en un archivo
-fs.writeFileSync('nodejs_tiempo.txt', duracion.toString());
-
-console.log(`Suma de los primeros ${n} primos: ${resultado}`);
-console.log(`Tiempo de ejecucion: ${duracion} ms`);
+principal();

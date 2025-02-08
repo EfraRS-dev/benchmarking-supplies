@@ -1,60 +1,63 @@
 #include <iostream>
 #include <vector>
-#include <chrono>
+#include <numeric>
 #include <fstream>
+#include <chrono>
+#include <filesystem>
 
 using namespace std;
-using namespace std::chrono;
+namespace fs = filesystem;
 
-int sumaPrimos(int n) {
-    if (n < 1) return 0;
-
-    vector<bool> esPrimo(n + 1, true);
+vector<int> cribaEratostenes(int limiteSuperior) {
+    vector<bool> esPrimo(limiteSuperior + 1, true);
     esPrimo[0] = esPrimo[1] = false;
 
-    for (int p = 2; p * p <= n; p++) {
-        if (esPrimo[p]) {
-            for (int i = p * p; i <= n; i += p) {
-                esPrimo[i] = false;
+    for (int i = 2; i * i <= limiteSuperior; i++) {
+        if (esPrimo[i]) {
+            for (int multiplo = i * i; multiplo <= limiteSuperior; multiplo += i) {
+                esPrimo[multiplo] = false;
             }
         }
     }
 
-    int suma = 0;
-    for (int p = 2; p <= n; p++) {
-        if (esPrimo[p]) {
-            suma += p;
+    vector<int> listaPrimos;
+    for (int i = 2; i <= limiteSuperior; i++) {
+        if (esPrimo[i]) {
+            listaPrimos.push_back(i);
         }
     }
+    return listaPrimos;
+}
 
-    return suma;
+void principal() {
+    auto tiempoInicio = chrono::high_resolution_clock::now();
+    
+    int limite = 100000000;
+    vector<int> listaPrimos = cribaEratostenes(limite);
+    long long sumaPrimos = accumulate(listaPrimos.begin(), listaPrimos.end(), 0LL);
+    
+    auto tiempoFin = chrono::high_resolution_clock::now();
+    double tiempoEjecucion = chrono::duration<double>(tiempoFin - tiempoInicio).count();
+
+    cout << "C++: Suma de los primos hasta 100 millones: " << sumaPrimos << endl;
+    cout << "Tiempo de ejecución: " << tiempoEjecucion << " s" << endl;
+
+    // Obtener el directorio actual
+    string directorioScript = fs::current_path().string();
+    string rutaArchivo = directorioScript + "/data_cpp.txt";
+
+    // Escribir en archivo
+    ofstream archivo(rutaArchivo);
+    if (archivo.is_open()) {
+        archivo << tiempoEjecucion << endl;
+        archivo << sumaPrimos << endl;
+        archivo.close();
+    } else {
+        cerr << "Error al escribir el archivo." << endl;
+    }
 }
 
 int main() {
-    int n = 1000000; // Cambia este valor para probar con otros números
-    auto inicio = high_resolution_clock::now();
-
-    int resultado = sumaPrimos(n);
-
-    auto fin = high_resolution_clock::now();
-    auto duracion = duration_cast<milliseconds>(fin - inicio);
-
-    // Guardar la suma en un archivo
-    ofstream archivoSuma("cpp_suma.txt");
-    if (archivoSuma.is_open()) {
-        archivoSuma << resultado;
-        archivoSuma.close();
-    }
-
-    // Guardar el tiempo en un archivo
-    ofstream archivoTiempo("cpp_tiempo.txt");
-    if (archivoTiempo.is_open()) {
-        archivoTiempo << duracion.count();
-        archivoTiempo.close();
-    }
-
-    cout << "Suma de los primeros " << n << " primos: " << resultado << endl;
-    cout << "Tiempo de ejecucion: " << duracion.count() << " ms" << endl;
-
+    principal();
     return 0;
 }

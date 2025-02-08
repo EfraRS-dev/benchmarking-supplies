@@ -1,57 +1,60 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-public class script {
-    public static int sumaPrimos(int n) {
-        if (n < 1) return 0;
+public class Script {
+    
+    public static List<Integer> cribaEratostenes(int limiteSuperior) {
+        boolean[] esPrimo = new boolean[limiteSuperior + 1];
+        for (int i = 2; i <= limiteSuperior; i++) {
+            esPrimo[i] = true;
+        }
 
-        boolean[] esPrimo = new boolean[n + 1];
-        Arrays.fill(esPrimo, true);
-        esPrimo[0] = esPrimo[1] = false;
-
-        for (int p = 2; p * p <= n; p++) {
-            if (esPrimo[p]) {
-                for (int i = p * p; i <= n; i += p) {
-                    esPrimo[i] = false;
+        for (int i = 2; i * i <= limiteSuperior; i++) {
+            if (esPrimo[i]) {
+                for (int multiplo = i * i; multiplo <= limiteSuperior; multiplo += i) {
+                    esPrimo[multiplo] = false;
                 }
             }
         }
 
-        int suma = 0;
-        for (int p = 2; p <= n; p++) {
-            if (esPrimo[p]) {
-                suma += p;
+        List<Integer> listaPrimos = new ArrayList<>();
+        for (int i = 2; i <= limiteSuperior; i++) {
+            if (esPrimo[i]) {
+                listaPrimos.add(i);
             }
         }
+        return listaPrimos;
+    }
 
-        return suma;
+    public static void principal() {
+        long tiempoInicio = System.currentTimeMillis();
+        
+        int limite = 100000000;
+        List<Integer> listaPrimos = cribaEratostenes(limite);
+        long sumaPrimos = listaPrimos.stream().mapToLong(Integer::longValue).sum();
+        
+        long tiempoFin = System.currentTimeMillis();
+        double tiempoEjecucion = (tiempoFin - tiempoInicio) / 1000.0;
+
+        System.out.println("JAVA: Suma de los primos hasta 100 millones: " + sumaPrimos);
+        System.out.printf("Tiempo de ejecucion: %.2f s%n", tiempoEjecucion);
+        
+        // Obtener el directorio donde se ejecuta el programa
+        String directorioScript = System.getProperty("user.dir");
+        String rutaArchivo = directorioScript + File.separator + "data_java.txt";
+        
+        try (FileWriter fileWriter = new FileWriter(rutaArchivo)) {
+            fileWriter.write(tiempoEjecucion + "\n");
+            fileWriter.write(sumaPrimos + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
-        int n = 1000000; // Cambia este valor para probar con otros números
-        long inicio = System.currentTimeMillis();
-
-        int resultado = sumaPrimos(n);
-
-        long fin = System.currentTimeMillis();
-        long duracion = fin - inicio;
-
-        // Guardar la suma en un archivo
-        try (FileWriter archivoSuma = new FileWriter("java_suma.txt")) {
-            archivoSuma.write(String.valueOf(resultado));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Guardar el tiempo en un archivo
-        try (FileWriter archivoTiempo = new FileWriter("java_tiempo.txt")) {
-            archivoTiempo.write(String.valueOf(duracion));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Suma de los primeros " + n + " primos: " + resultado);
-        System.out.println("Tiempo de ejecucion: " + duracion + " ms");
+        principal();
     }
 }

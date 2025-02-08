@@ -1,0 +1,4 @@
+docker pull node:18
+docker build -t sum_node .
+docker run --rm -v $(pwd):/app sum_node (linux)
+docker run --rm -v ${PWD}:/app sum_node (Powershell)
