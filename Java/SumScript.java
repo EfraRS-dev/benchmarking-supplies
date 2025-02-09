@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Script {
+public class SumScript {
     
     public static List<Integer> cribaEratostenes(int limiteSuperior) {
         boolean[] esPrimo = new boolean[limiteSuperior + 1];

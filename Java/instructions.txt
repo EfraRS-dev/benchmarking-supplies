@@ -1,0 +1,4 @@
+docker pull openjdk:latest
+docker build -t sum_java .
+docker run --rm -v ${PWD}:/app sum_java (desde PowerShell)
+docker run --rm -v $(pwd):/app sum_java (desde Linux)

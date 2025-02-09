@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function cribaEratostenes(limiteSuperior) {
     let esPrimo = new Array(limiteSuperior + 1).fill(true);
@@ -13,26 +13,24 @@ function cribaEratostenes(limiteSuperior) {
         }
     }
 
-    return esPrimo
-        .map((primo, index) => (primo ? index : 0))
-        .filter(numero => numero !== 0);
+    return esPrimo.map((primo, index) => (primo ? index : -1)).filter(num => num !== -1);
 }
 
 function principal() {
-    const tiempoInicio = Date.now();
-    
-    const limite = 10000000;
-    const listaPrimos = cribaEratostenes(limite);
-    const sumaPrimos = listaPrimos.reduce((acc, num) => acc + num, 0);
-    
-    const tiempoFin = Date.now();
-    const tiempoEjecucion = (tiempoFin - tiempoInicio) / 1000.0;
+    const tiempoInicio = process.hrtime();
 
-    console.log(`NODE: Suma de los primos hasta 10 millones: ${sumaPrimos}`);
-    console.log(`Tiempo de ejecución: ${tiempoEjecucion.toFixed(2)} s`);
+    const limite = 40000000;
+    const listaPrimos = cribaEratostenes(limite);
+    const sumaPrimos = listaPrimos.reduce((acc, val) => acc + val, 0);
+
+    const tiempoFin = process.hrtime(tiempoInicio);
+    const tiempoEjecucion = tiempoFin[0] + tiempoFin[1] / 1e9;
+
+    console.log(`JS: Suma de los primos hasta 40 millones: ${sumaPrimos}`);
+    console.log(`Tiempo de ejecucion: ${tiempoEjecucion.toFixed(2)} s`);
 
     const directorioScript = __dirname;
-    const rutaArchivo = path.join(directorioScript, 'data_js.txt');
+    const rutaArchivo = path.join(directorioScript, "data_js.txt");
 
     fs.writeFileSync(rutaArchivo, `${tiempoEjecucion}\n${sumaPrimos}`);
 }

@@ -1,0 +1,4 @@
+docker pull swift:latest
+docker build -t sum_swift .
+docker run --rm -v ${PWD}:/app sum_swift (Powershell)
+docker run --rm -v $(pwd):/app sum_swift (bash)

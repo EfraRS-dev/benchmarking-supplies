@@ -1,53 +1,45 @@
 import Foundation
 
-func sumaPrimos(_ n: Int) -> Int {
-    if n < 1 {
-        return 0
-    }
-
-    var esPrimo = [Bool](repeating: true, count: n + 1)
+func cribaEratostenes(limiteSuperior: Int) -> [Int] {
+    var esPrimo = [Bool](repeating: true, count: limiteSuperior + 1)
     esPrimo[0] = false
     esPrimo[1] = false
 
-    for p in 2...Int(sqrt(Double(n))) {
-        if esPrimo[p] {
-            for i in stride(from: p * p, through: n, by: p) {
-                esPrimo[i] = false
+    for i in 2...Int(Double(limiteSuperior).squareRoot()) {
+        if esPrimo[i] {
+            for multiplo in stride(from: i * i, through: limiteSuperior, by: i) {
+                esPrimo[multiplo] = false
             }
         }
     }
 
-    var suma = 0
-    for p in 2...n {
-        if esPrimo[p] {
-            suma += p
-        }
+    return (2...limiteSuperior).filter { esPrimo[$0] }
+}
+
+func principal() {
+    let tiempoInicio = Date()
+
+    let limite = 100000000
+    let listaPrimos = cribaEratostenes(limiteSuperior: limite)
+    let sumaPrimos = listaPrimos.reduce(0, +)
+
+    let tiempoFin = Date()
+    let tiempoEjecucion = tiempoFin.timeIntervalSince(tiempoInicio)
+
+    print("Swift: Suma de los primos hasta 100 millones: \(sumaPrimos)")
+    print(String(format: "Tiempo de ejecución: %.2f s", tiempoEjecucion))
+
+    // Obtener la ruta del directorio del script
+    let directorioScript = FileManager.default.currentDirectoryPath
+    let rutaArchivo = "\(directorioScript)/data_swift.txt"
+
+    // Escribir en un archivo
+    do {
+        let contenido = "\(tiempoEjecucion)\n\(sumaPrimos)"
+        try contenido.write(toFile: rutaArchivo, atomically: true, encoding: .utf8)
+    } catch {
+        print("Error al escribir el archivo: \(error)")
     }
-
-    return suma
 }
 
-let n = 1000000 // Cambia este valor para probar con otros números
-let inicio = CFAbsoluteTimeGetCurrent()
-
-let resultado = sumaPrimos(n)
-
-let fin = CFAbsoluteTimeGetCurrent()
-let duracion = (fin - inicio) * 1000 // Convertir a milisegundos
-
-// Guardar la suma en un archivo
-do {
-    try String(resultado).write(toFile: "swift_suma.txt", atomically: true, encoding: .utf8)
-} catch {
-    print("Error al guardar la suma: \(error)")
-}
-
-// Guardar el tiempo en un archivo
-do {
-    try String(duracion).write(toFile: "swift_tiempo.txt", atomically: true, encoding: .utf8)
-} catch {
-    print("Error al guardar el tiempo: \(error)")
-}
-
-print("Suma de los primeros \(n) primos: \(resultado)")
-print("Tiempo de ejecucion: \(duracion) ms")
+principal()

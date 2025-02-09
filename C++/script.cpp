@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
-#include <numeric>
-#include <fstream>
+#include <cmath>
 #include <chrono>
-#include <filesystem>
+#include <fstream>
 
 using namespace std;
-namespace fs = filesystem;
+using namespace std::chrono;
 
 vector<int> cribaEratostenes(int limiteSuperior) {
     vector<bool> esPrimo(limiteSuperior + 1, true);
@@ -20,40 +19,37 @@ vector<int> cribaEratostenes(int limiteSuperior) {
         }
     }
 
-    vector<int> listaPrimos;
+    vector<int> primos;
     for (int i = 2; i <= limiteSuperior; i++) {
-        if (esPrimo[i]) {
-            listaPrimos.push_back(i);
-        }
+        if (esPrimo[i]) primos.push_back(i);
     }
-    return listaPrimos;
+    return primos;
 }
 
 void principal() {
-    auto tiempoInicio = chrono::high_resolution_clock::now();
-    
+    auto tiempoInicio = high_resolution_clock::now();
+
     int limite = 100000000;
     vector<int> listaPrimos = cribaEratostenes(limite);
-    long long sumaPrimos = accumulate(listaPrimos.begin(), listaPrimos.end(), 0LL);
-    
-    auto tiempoFin = chrono::high_resolution_clock::now();
-    double tiempoEjecucion = chrono::duration<double>(tiempoFin - tiempoInicio).count();
+    long long sumaPrimos = 0;
+
+    for (int primo : listaPrimos) {
+        sumaPrimos += primo;
+    }
+
+    auto tiempoFin = high_resolution_clock::now();
+    duration<double> tiempoEjecucion = tiempoFin - tiempoInicio;
 
     cout << "C++: Suma de los primos hasta 100 millones: " << sumaPrimos << endl;
-    cout << "Tiempo de ejecución: " << tiempoEjecucion << " s" << endl;
+    cout << "Tiempo de ejecucion: " << tiempoEjecucion.count() << " s" << endl;
 
-    // Obtener el directorio actual
-    string directorioScript = fs::current_path().string();
-    string rutaArchivo = directorioScript + "/data_cpp.txt";
-
-    // Escribir en archivo
-    ofstream archivo(rutaArchivo);
+    ofstream archivo("data_cpp.txt");
     if (archivo.is_open()) {
-        archivo << tiempoEjecucion << endl;
-        archivo << sumaPrimos << endl;
+        archivo << tiempoEjecucion.count() << "\n";
+        archivo << sumaPrimos;
         archivo.close();
     } else {
-        cerr << "Error al escribir el archivo." << endl;
+        cerr << "Error al abrir el archivo!" << endl;
     }
 }
 
