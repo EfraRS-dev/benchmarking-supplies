@@ -1,5 +1,5 @@
 FROM gcc:latest
-WORKDIR /usr/src/myapp
-COPY script.cpp /usr/src/myapp
+WORKDIR /usr/src/app
+COPY script.cpp /usr/src/app
 RUN g++ -o myapp script.cpp
 CMD ["./myapp"]

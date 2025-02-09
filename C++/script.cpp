@@ -3,57 +3,56 @@
 #include <cmath>
 #include <chrono>
 #include <fstream>
+#include <filesystem>
 
-using namespace std;
-using namespace std::chrono;
+void criba_eratostenes(int limite_superior, std::vector<int>& primos) {
+    std::vector<bool> es_primo(limite_superior + 1, true);
+    es_primo[0] = es_primo[1] = false;
 
-vector<int> cribaEratostenes(int limiteSuperior) {
-    vector<bool> esPrimo(limiteSuperior + 1, true);
-    esPrimo[0] = esPrimo[1] = false;
-
-    for (int i = 2; i * i <= limiteSuperior; i++) {
-        if (esPrimo[i]) {
-            for (int multiplo = i * i; multiplo <= limiteSuperior; multiplo += i) {
-                esPrimo[multiplo] = false;
+    for (int i = 2; i <= std::sqrt(limite_superior); ++i) {
+        if (es_primo[i]) {
+            for (int multiplo = i * i; multiplo <= limite_superior; multiplo += i) {
+                es_primo[multiplo] = false;
             }
         }
     }
 
-    vector<int> primos;
-    for (int i = 2; i <= limiteSuperior; i++) {
-        if (esPrimo[i]) primos.push_back(i);
-    }
-    return primos;
-}
-
-void principal() {
-    auto tiempoInicio = high_resolution_clock::now();
-
-    int limite = 100000000;
-    vector<int> listaPrimos = cribaEratostenes(limite);
-    long long sumaPrimos = 0;
-
-    for (int primo : listaPrimos) {
-        sumaPrimos += primo;
-    }
-
-    auto tiempoFin = high_resolution_clock::now();
-    duration<double> tiempoEjecucion = tiempoFin - tiempoInicio;
-
-    cout << "C++: Suma de los primos hasta 100 millones: " << sumaPrimos << endl;
-    cout << "Tiempo de ejecucion: " << tiempoEjecucion.count() << " s" << endl;
-
-    ofstream archivo("data_cpp.txt");
-    if (archivo.is_open()) {
-        archivo << tiempoEjecucion.count() << "\n";
-        archivo << sumaPrimos;
-        archivo.close();
-    } else {
-        cerr << "Error al abrir el archivo!" << endl;
+    for (int i = 2; i <= limite_superior; ++i) {
+        if (es_primo[i]) {
+            primos.push_back(i);
+        }
     }
 }
 
 int main() {
-    principal();
+    using namespace std::chrono;
+    auto tiempo_inicio = high_resolution_clock::now();
+
+    int limite = 100000000; // 100 millones
+    std::vector<int> lista_primos;
+    criba_eratostenes(limite, lista_primos);
+
+    long long suma_primos = 0;
+    for (int primo : lista_primos) {
+        suma_primos += primo;
+    }
+
+    auto tiempo_fin = high_resolution_clock::now();
+    double tiempo_ejecucion = duration<double>(tiempo_fin - tiempo_inicio).count();
+
+    std::cout << "C++: Suma de los primos hasta 100 millones: " << suma_primos << std::endl;
+    std::cout << "Tiempo de ejecucion: " << tiempo_ejecucion << " s" << std::endl;
+
+    std::string ruta_archivo = "/usr/src/app/data/data_cpp.txt";
+
+    std::ofstream archivo_salida(ruta_archivo);
+    if (archivo_salida.is_open()) {
+        archivo_salida << tiempo_ejecucion << "\n";
+        archivo_salida << suma_primos;
+        archivo_salida.close();
+    } else {
+        std::cerr << "Error al abrir el archivo para escribir." << std::endl;
+    }
+
     return 0;
 }

@@ -1,0 +1,4 @@
+docker pull rocker/r-base:latest
+docker build -t sum_r .
+docker run -v ${PWD}:/app sum_r (PowerShell)
+docker run -v $(pwd):/app sum_r (Bash)

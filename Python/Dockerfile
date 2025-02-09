@@ -1,9 +1,5 @@
-FROM python:3.10-slim
-
+FROM python:latest
 WORKDIR /app
-
 COPY . /app
-
 EXPOSE 80
-
 CMD ["python", "script.py"]

@@ -1,4 +1,4 @@
 docker pull gcc:latest
 docker build -t sum_cc .
-docker run -v ${PWD}:/myapp sum_cc (Powershell)
-docker run -v $(pwd):/myapp sum_cc (Bash)
+docker run --rm -v ${PWD}:/usr/src/app/data sum_cc (Powershell)
+docker run --rm -v $(pwd):/usr/src/app/data sum_cc (Bash)
