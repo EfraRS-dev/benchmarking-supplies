@@ -14,7 +14,7 @@ services:
   cpp:
     build: ./C++
     volumes:
-      - ./C++/data_cpp.txt:/app/data_cpp.txt
+      - ./C++/data_cpp.txt:/usr/src/app/data/data_cpp.txt
 
   nodejs:
     build: ./Node
