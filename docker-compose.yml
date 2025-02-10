@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  python:
+    build: ./Python
+    volumes:
+      - ./Python/data_py.txt:/app/data_py.txt
+
+  java:
+    build: ./Java
+    volumes:
+      - ./Java/data_java.txt:/app/data_java.txt
+
+  cpp:
+    build: ./C++
+    volumes:
+      - ./C++/data_cpp.txt:/app/data_cpp.txt
+
+  nodejs:
+    build: ./Node
+    volumes:
+      - ./Node/data_js.txt:/app/data_js.txt
+
+  r:
+    build: ./R
+    volumes:
+      - ./R/data_r.txt:/app/data_r.txt
