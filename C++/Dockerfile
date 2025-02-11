@@ -1,5 +1,7 @@
-FROM gcc:latest
+FROM gcc:alpine
 WORKDIR /usr/src/app
-COPY script.cpp /usr/src/app
+COPY script.cpp .
+RUN apk add --no-cache libstdc++
 RUN g++ -o myapp script.cpp
-CMD ["./myapp"]
+RUN mkdir -p /usr/src/app/data
+CMD ["./myapp"]' > Dockerfile

@@ -1,24 +1,18 @@
 #!/bin/bash
 
-declare -A data_files=(
-    ["python"]="Python/data_py.txt"
-    ["java"]="Java/data_java.txt"
-    ["cpp"]="C++/data_cpp.txt"
-    ["nodejs"]="Node/data_js.txt"
-    ["r"]="R/data_r.txt"
-)
+echo "Lenguaje,Tiempo (ms)" > results.csv
 
-echo "Lenguaje,Tiempo (s)" > results.csv
-
-# Lectura de archivo por lenguaje
-for service in "${!data_files[@]}"; do
-    echo "Ejecutando $service..."
-    docker-compose run --rm "$service"
+for lang in python java cpp nodejs r; do
+    echo "Ejecutando $lang..."
     
-    execution_time=$(cat "${data_files[$service]}")
+    START_TIME=$(date +%s%N)
+    docker-compose run --rm $lang
+    END_TIME=$(date +%s%N)
     
-    echo "$service,$execution_time" >> results.csv
-    echo "$service completado en $execution_time s"
+    EXECUTION_TIME=$(( (END_TIME - START_TIME) / 1000000 ))
+    echo "$lang,$EXECUTION_TIME" >> results.csv
+    
+    echo "$lang completado en $EXECUTION_TIME ms"
 done
 
-cat results.csv
+echo "Resultados guardados en results.csv"
