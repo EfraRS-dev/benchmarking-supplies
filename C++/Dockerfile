@@ -1,5 +1,7 @@
-FROM gcc:latest
+FROM alpine:latest
 WORKDIR /usr/src/app
-COPY script.cpp /usr/src/app
-RUN g++ -o myapp script.cpp
+RUN apk add --no-cache g++ libstdc++
+COPY script.cpp .
+RUN g++ -o myapp script.cpp && ls -l myapp
+RUN chmod +x myapp
 CMD ["./myapp"]

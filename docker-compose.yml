@@ -3,25 +3,25 @@ version: '3.8'
 services:
   python:
     build: ./Python
-    volumes:
-      - ./Python/data_py.txt:/app/data_py.txt
+    container_name: python_benchmark
+    entrypoint: ['python3', 'script.py']
 
   java:
     build: ./Java
-    volumes:
-      - ./Java/data_java.txt:/app/data_java.txt
+    container_name: java_benchmark
+    entrypoint: ['java', 'SumScript'] 
 
   cpp:
     build: ./C++
-    volumes:
-      - ./C++/data_cpp.txt:/usr/src/app/data/data_cpp.txt
+    container_name: cpp_benchmark
+    entrypoint: ['./myapp'] 
 
   nodejs:
     build: ./Node
-    volumes:
-      - ./Node/data_js.txt:/app/data_js.txt
+    container_name: nodejs_benchmark
+    entrypoint: ['node', 'index.js']
 
   r:
     build: ./R
-    volumes:
-      - ./R/data_r.txt:/app/data_r.txt
+    container_name: r_benchmark
+    entrypoint: ['Rscript', 'script.R']

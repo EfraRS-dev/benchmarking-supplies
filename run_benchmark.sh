@@ -1,24 +1,32 @@
 #!/bin/bash
 
-declare -A data_files=(
-    ["python"]="Python/data_py.txt"
-    ["java"]="Java/data_java.txt"
-    ["cpp"]="C++/data_cpp.txt"
-    ["nodejs"]="Node/data_js.txt"
-    ["r"]="R/data_r.txt"
-)
+echo "Lenguaje,Tiempo (ms)" > results.csv
 
-echo "Lenguaje,Tiempo (s)" > results.csv
+for lang in python java cpp nodejs r; do
+    echo "Limpiando contenedores e imágenes antes de ejecutar $lang..."
+    
+    docker container prune -f  # Borra contenedores detenidos
+    docker image prune -f -a   # Borra imágenes no utilizadas
+    docker volume prune -f     # Borra volúmenes no usados
+    docker system prune -f     # Borra todo lo que no esté en uso
+    
+    echo "Ejecutando $lang..."
+    
+    START_TIME=$(date +%s%N)
+    docker-compose run --rm $lang
+    END_TIME=$(date +%s%N)
+    
+    EXECUTION_TIME=$(( (END_TIME - START_TIME) / 1000000 ))
+    echo "$lang,$EXECUTION_TIME" >> results.csv
+    
+    echo "$lang completado en $EXECUTION_TIME ms"
 
-# Lectura de archivo por lenguaje
-for service in "${!data_files[@]}"; do
-    echo "Ejecutando $service..."
-    docker-compose run --rm "$service"
-    
-    execution_time=$(cat "${data_files[$service]}")
-    
-    echo "$service,$execution_time" >> results.csv
-    echo "$service completado en $execution_time s"
+    echo "Limpiando después de ejecutar $lang..."
+    docker container prune -f
+    docker image prune -f -a
+    docker volume prune -f
+    docker system prune -f
+
 done
 
-cat results.csv
+echo "Resultados guardados en results.csv"
