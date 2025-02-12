@@ -4,24 +4,24 @@ services:
   python:
     build: ./Python
     container_name: python_benchmark
-    entrypoint: ["python3", "script.py"]
+    entrypoint: ['python3', 'script.py']
 
   java:
     build: ./Java
     container_name: java_benchmark
-    entrypoint: ["java", "SumScript"]  # Archivo .class (sin extensión)
+    entrypoint: ['java', 'SumScript'] 
 
   cpp:
     build: ./C++
     container_name: cpp_benchmark
-    entrypoint: ["./script"]  # Ejecutable compilado
+    entrypoint: ['./myapp'] 
 
   nodejs:
     build: ./Node
     container_name: nodejs_benchmark
-    entrypoint: ["node", "index.js"]
+    entrypoint: ['node', 'index.js']
 
   r:
     build: ./R
     container_name: r_benchmark
-    entrypoint: ["Rscript", "script.R"]
+    entrypoint: ['Rscript', 'script.R']

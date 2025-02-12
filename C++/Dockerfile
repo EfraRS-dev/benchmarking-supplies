@@ -1,7 +1,7 @@
-FROM gcc:alpine
+FROM alpine:latest
 WORKDIR /usr/src/app
+RUN apk add --no-cache g++ libstdc++
 COPY script.cpp .
-RUN apk add --no-cache libstdc++
-RUN g++ -o myapp script.cpp
-RUN mkdir -p /usr/src/app/data
-CMD ["./myapp"]' > Dockerfile
+RUN g++ -o myapp script.cpp && ls -l myapp
+RUN chmod +x myapp
+CMD ["./myapp"]
